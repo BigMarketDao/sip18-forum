@@ -1,9 +1,31 @@
 {
 	"name": "sip18-forum",
-	"private": true,
-	"version": "0.0.1",
+	"version": "1.0.0",
+	"description": "Svelte components for a SIP-018 signed message forum",
 	"type": "module",
+	"exports": {
+		".": {
+			"svelte": "./index.js",
+			"types": "./index.d.ts"
+		}
+	},
+	"svelte": "./index.js",
+	"types": "./index.d.ts",
+	"files": [
+		"index.js",
+		"index.d.ts",
+		"index.svelte",
+		"*.css",
+		"components",
+		"theme"
+	],
+	"main": "./index.js",
+	"module": "./index.js",
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
+		"package": "svelte-package",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
@@ -19,7 +41,8 @@
 		"@skeletonlabs/skeleton": "^3.1.7",
 		"@skeletonlabs/skeleton-svelte": "^1.3.0",
 		"@sveltejs/adapter-auto": "^3.0.0",
-		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/kit": "^2.5.10",
+		"@sveltejs/package": "^2.4.0",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",
 		"autoprefixer": "^10.4.20",
 		"eslint": "^9.7.0",
@@ -31,6 +54,7 @@
 		"prettier-plugin-tailwindcss": "^0.6.5",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
+		"svelte-preprocess": "^6.0.3",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.0.0",
 		"vite": "^5.4.19",

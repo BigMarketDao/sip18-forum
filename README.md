@@ -26,3 +26,14 @@ To create a production version of your app:
 ```bash
 npm run build
 ```
+
+## Packaging
+
+To build the package and push to npm
+
+```bash
+npm run package
+cd dist
+cp ../package.json .
+npm publish --access public
+```
