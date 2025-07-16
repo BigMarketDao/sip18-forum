@@ -1,6 +1,12 @@
 # sip18-forum
 
-Quick start forum compatible with Stacks SIP-018 structured messages
+Quick start forum compatible with Stacks SIP-018 structured messages.
+
+Main components;
+
+- UI (sip18-forum)[https://github.com/BigMarketDao/sip18-forum]
+- Backend (sip18-forum-api)[https://github.com/BigMarketDao/sip18-forum-api]
+- Types (sip18-forum-types)[https://github.com/BigMarketDao/sip18-forum-types]
 
 ## Developing
 
