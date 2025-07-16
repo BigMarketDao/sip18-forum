@@ -1,3 +1,4 @@
+import { getConfig } from '$lib/stores/stores_config';
 import { connect, getLocalStorage, disconnect, isConnected } from '@stacks/connect';
 import type { GetAddressesResult } from '@stacks/connect/dist/types/methods';
 
@@ -100,4 +101,11 @@ export function isLeather(): boolean {
 		}
 	}
 	return false;
+}
+
+export async function getBnsNameFromAddress(address: string): Promise<string | undefined> {
+	const res = await fetch(`${getConfig().VITE_STACKS_API}/v1/addresses/stacks/${address}`);
+	if (!res.ok) return undefined;
+	const data = await res.json();
+	return data.names?.[0] ?? undefined;
 }

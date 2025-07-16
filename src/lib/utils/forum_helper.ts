@@ -20,7 +20,8 @@ import type {
 	BaseForumContent,
 	LinkedAccount,
 	PostAuthorisation,
-	ForumMessageBoard
+	ForumMessageBoard,
+	AuthenticatedForumContent
 } from 'sip18-forum-types';
 
 export function getNewBoardTemplate(stxAddress: string): ForumMessageBoard {
@@ -80,24 +81,27 @@ export async function openWalletForSignature(appConfig: Config, message: BaseFor
 	});
 }
 
-export async function verifyPostAndSave(forumContent: ForumMessage, auth: PostAuthorisation) {
+export function verifyPost(wrapper: AuthenticatedForumContent) {
 	try {
-		const la = getPreferredLinkedAccount(forumContent.linkedAccounts);
+		const la = getPreferredLinkedAccount(wrapper.forumContent.linkedAccounts);
 		if (!la) return false;
-		const stxAddressFromKey = getC32AddressFromPublicKey(auth.publicKey, getConfig().VITE_NETWORK);
+		const stxAddressFromKey = getC32AddressFromPublicKey(
+			wrapper.auth.publicKey,
+			getConfig().VITE_NETWORK
+		);
 		if (la.identifier !== stxAddressFromKey) {
 			console.log('/polls: wrong voter: ' + la.identifier + ' signer: ' + stxAddressFromKey);
 			return false;
 		}
-		const forumPostCV = forumMessageToTupleCV(forumContent);
+		const forumPostCV = forumMessageToTupleCV(wrapper.forumContent);
 
 		let valid = verifyForumSignature(
 			getConfig().VITE_NETWORK,
 			getConfig().VITE_PUBLIC_APP_NAME,
 			getConfig().VITE_PUBLIC_APP_VERSION,
 			forumPostCV,
-			auth.publicKey,
-			auth.signature
+			wrapper.auth.publicKey,
+			wrapper.auth.signature
 		);
 
 		if (!valid) {
@@ -105,7 +109,7 @@ export async function verifyPostAndSave(forumContent: ForumMessage, auth: PostAu
 			return false;
 		}
 
-		return false;
+		return true;
 	} catch (err: any) {
 		console.error('Post verification error:', err);
 		throw new Error(`Post verification failed: ${err.message}`);
