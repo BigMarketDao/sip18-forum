@@ -5,7 +5,7 @@
 </script>
 
 <div class="space-y-6 p-6">
-	<h1 class="text-2xl font-bold">📣 All Community Message Board</h1>
+	<h1 class="text-2xl font-bold">📣 Community Boards</h1>
 
 	{#each $boards as board}
 		<div

@@ -8,6 +8,12 @@ Main components;
 - Backend (sip18-forum-api)[https://github.com/BigMarketDao/sip18-forum-api]
 - Types (sip18-forum-types)[https://github.com/BigMarketDao/sip18-forum-types]
 
+## TODO
+
+1. BNS Names
+2. Verified markers
+3. Nostr back end
+
 ## Developing
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
