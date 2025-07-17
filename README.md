@@ -8,6 +8,8 @@ Main components;
 - Backend (sip18-forum-api)[https://github.com/BigMarketDao/sip18-forum-api]
 - Types (sip18-forum-types)[https://github.com/BigMarketDao/sip18-forum-types]
 
+See also (stacks voice)[https://github.com/Clarity-Innovation-Lab/stacks-voice]
+
 ## TODO
 
 1. BNS Names

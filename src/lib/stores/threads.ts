@@ -21,6 +21,20 @@ export async function loadBoards(): Promise<Array<AuthenticatedForumMessageBoard
 	}
 }
 
+export async function loadBoard(
+	messageBoardId: string
+): Promise<AuthenticatedForumMessageBoard | undefined> {
+	try {
+		const res = await fetch(`${getConfig().VITE_BIGMARKET_API}/forum/board/${messageBoardId}`);
+		if (!res.ok) throw new Error('Failed to load boards');
+		const data = await res.json();
+		return data;
+	} catch (err) {
+		console.error('Error loading threads:', err);
+		return;
+	}
+}
+
 export async function loadMessages(messageBoardId: string) {
 	try {
 		const res = await fetch(`${getConfig().VITE_BIGMARKET_API}/forum/messages/${messageBoardId}`);

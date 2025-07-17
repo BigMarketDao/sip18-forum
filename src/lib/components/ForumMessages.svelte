@@ -6,16 +6,14 @@
 	import NewMessageCard from './NewMessageCard.svelte';
 
 	export let messageBoardId;
+	export let messages: Array<AuthenticatedForumContent>;
 	export let level;
-	let messages: Array<AuthenticatedForumContent>;
 
 	const handleReload = async (data: any) => {
 		messages = await loadMessages(messageBoardId);
 	};
 
-	onMount(async () => {
-		messages = await loadMessages(messageBoardId);
-	});
+	onMount(async () => {});
 </script>
 
 {#if level === 1}

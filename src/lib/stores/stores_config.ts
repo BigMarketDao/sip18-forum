@@ -27,7 +27,7 @@ export const config: { [key: string]: Config } = {
 		VITE_PUBLIC_APP_NAME: 'BigMarket',
 		VITE_PUBLIC_APP_VERSION: '1.0.0',
 		VITE_NETWORK: 'devnet',
-		VITE_BIGMARKET_API: 'http://localhost:3020/bigmarket-api',
+		VITE_BIGMARKET_API: 'http://localhost:3025/bigmarket-api',
 		VITE_STACKS_API: 'http://localhost:3999'
 	},
 	testnet: {
