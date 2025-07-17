@@ -118,10 +118,12 @@ export function verifyPost(wrapper: AuthenticatedForumContent) {
 }
 
 export function getDomain(appConfig: Config) {
+	const chainId = appConfig.VITE_NETWORK === 'mainnet' ? ChainId.Mainnet : ChainId.Testnet;
+	console.log(chainId);
 	return {
 		name: appConfig.VITE_PUBLIC_APP_NAME,
 		version: appConfig.VITE_PUBLIC_APP_VERSION,
-		'chain-id': appConfig.VITE_NETWORK === 'mainnet' ? ChainId.Testnet : ChainId.Testnet
+		'chain-id': chainId
 	};
 }
 
