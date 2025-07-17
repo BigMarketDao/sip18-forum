@@ -11,7 +11,7 @@ export function getConfig(): Config {
 
 export function getNetworkFromUrl(url: URL): string {
 	const chain = url.searchParams.get('chain');
-	return chain && ['mainnet', 'testnet', 'devnet'].includes(chain) ? chain : 'devnet';
+	return chain && ['mainnet', 'testnet', 'devnet'].includes(chain) ? chain : 'mainnet';
 }
 
 export interface Config {
@@ -27,21 +27,21 @@ export const config: { [key: string]: Config } = {
 		VITE_PUBLIC_APP_NAME: 'BigMarketForum',
 		VITE_PUBLIC_APP_VERSION: '1.0.0',
 		VITE_NETWORK: 'devnet',
-		VITE_BIGMARKET_API: 'http://localhost:3025/bigmarket-api',
+		VITE_BIGMARKET_API: 'http://localhost:3025/forum-api',
 		VITE_STACKS_API: 'https://api.hiro.so'
 	},
 	testnet: {
 		VITE_PUBLIC_APP_NAME: 'BigMarketForum',
 		VITE_PUBLIC_APP_VERSION: '1.0.0',
 		VITE_NETWORK: 'testnet',
-		VITE_BIGMARKET_API: 'https://api.testnet.bigmarket.ai/bigmarket-api',
+		VITE_BIGMARKET_API: 'https://api.forum.testnet.bigmarket.ai/forum-api',
 		VITE_STACKS_API: 'https://api.testnet.hiro.so'
 	},
 	mainnet: {
 		VITE_PUBLIC_APP_NAME: 'BigMarketForum',
 		VITE_PUBLIC_APP_VERSION: '1.0.0',
 		VITE_NETWORK: 'mainnet',
-		VITE_BIGMARKET_API: 'https://api.bigmarket.ai/bigmarket-api',
+		VITE_BIGMARKET_API: 'https://api.forum.bigmarket.ai/forum-api',
 		VITE_STACKS_API: 'https://api.hiro.so'
 	}
 };

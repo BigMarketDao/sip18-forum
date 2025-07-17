@@ -32,10 +32,11 @@ ssh -p $PORT bob@$SERVER <<EOF
 	nvm use default
 	cd /var/www/forum
 	npm install --omit=dev --no-audit --no-fund
+	PORT=3004
 	if pm2 jlist | grep -q '"name":"forum"'; then
 		pm2 restart forum
 	else
-		pm2 start index.js --name forum --cwd /var/www/forum --interpreter node --node-args="--enable-source-maps"
+		pm2 start /home/bob/pm2/forum.config.js
 	fi
 EOF
 

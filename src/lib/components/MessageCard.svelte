@@ -34,7 +34,6 @@
 		<h2 class="text-primary-500 text-lg font-semibold">{message.forumContent.title}</h2>
 	{/if}
 	<h3 class="text-primary-500 text-lg font-semibold">
-		cc
 		{#if verified}<ShieldAlert
 				class="text-success-700 inline-block"
 				width={15}
