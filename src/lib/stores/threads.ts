@@ -7,7 +7,9 @@ import type {
 	PostAuthorisation
 } from 'sip18-forum-types';
 
-export const boards = writable<AuthenticatedForumMessageBoard[]>([]);
+export const storedBnsData = writable<string>();
+export const storedBoard = writable<AuthenticatedForumMessageBoard>();
+export const storedBoards = writable<AuthenticatedForumMessageBoard[]>([]);
 
 export async function loadBoards(): Promise<Array<AuthenticatedForumMessageBoard>> {
 	try {
@@ -71,5 +73,6 @@ export async function createBoard(payload: {
 	});
 	if (!res.ok) throw new Error('Failed to create thread');
 	const data = await loadBoards(); // refresh local store
-	boards.set(data);
+	storedBoards.set(data);
+	if (data.length) storedBoard.set(data[0]);
 }

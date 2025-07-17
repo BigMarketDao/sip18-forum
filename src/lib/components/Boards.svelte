@@ -1,13 +1,10 @@
 <script lang="ts">
 	import NewMessageBoardModal from './NewMessageBoardModal.svelte';
-	import { boards } from '$lib/stores/threads';
-	import ForumMessages from './ForumMessages.svelte';
+	import { storedBoards } from '$lib/stores/threads';
 </script>
 
 <div class="space-y-6 p-6">
-	<h1 class="text-2xl font-bold">📣 Community Boards</h1>
-
-	{#each $boards as board}
+	{#each $storedBoards as board}
 		<div
 			class="text-surface-contrast-500 bg-primary-50-950 rounded-2xl border-1 border-dashed p-3 py-4 shadow"
 		>

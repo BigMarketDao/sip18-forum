@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { browser } from '$app/environment';
+	import { Sun, Moon } from '@lucide/svelte';
 
 	let isDark = true;
 
@@ -23,5 +23,9 @@
 
 <!-- {@render children()} -->
 <button on:click={toggleTheme}>
-	{isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+	{#if isDark}
+		<Sun size={20} />
+	{:else}
+		<Moon size={20} />
+	{/if}
 </button>

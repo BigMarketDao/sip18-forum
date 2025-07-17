@@ -48,7 +48,7 @@
 </script>
 
 <!-- Button to open modal -->
-<div class="flex justify-end">
+<div class="flex justify-center">
 	<button class="btn variant-filled bg-primary-500" on:click={() => (modalOpen = true)}>
 		New Board
 	</button>

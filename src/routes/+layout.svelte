@@ -4,6 +4,9 @@
 	import '../app.css';
 	import { browser } from '$app/environment';
 	import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';
+	import AppBar from '$lib/components/theme/AppBar.svelte';
+	import { getBnsNameFromAddress, getStxAddress, isLoggedIn } from '$lib/stacks/stacks-connect';
+	import { storedBnsData } from '$lib';
 	// let { children } = $props();
 
 	export let data: {
@@ -15,15 +18,12 @@
 
 	// let isDark = false;
 
-	onMount(() => {
+	onMount(async () => {
 		if (!browser) return;
-		// isDark = localStorage.theme === 'dark';
-		// const html = document.documentElement;
-		// if (isDark) {
-		// 	html.classList.add('dark');
-		// } else {
-		// 	html.classList.remove('dark');
-		// }
+		if (isLoggedIn()) {
+			const name = await getBnsNameFromAddress(getStxAddress());
+			storedBnsData.set(name || getStxAddress());
+		}
 	});
 </script>
 
@@ -34,10 +34,10 @@
 	       to-surface-100-900 min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]
 	       font-extralight"
 >
-	<div class="mx-auto max-w-7xl px-4 pt-20 sm:px-6 lg:px-8">
+	<div class="">
 		<div class="flex min-h-screen flex-col">
+			<AppBar />
 			<slot />
-			<ThemeToggle />
 		</div>
 	</div>
 </div>
