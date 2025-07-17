@@ -30,8 +30,11 @@
 	class="card bg-surface-100-900 text-surface-contrast-100-900 mb-4 space-y-3 rounded-xl p-4 shadow ml-{message
 		.forumContent.level * 1.5}"
 >
-	<h2 class="text-primary-500 text-lg font-semibold">{message.forumContent.title}</h2>
+	{#if message.forumContent.level === 1}
+		<h2 class="text-primary-500 text-lg font-semibold">{message.forumContent.title}</h2>
+	{/if}
 	<h3 class="text-primary-500 text-lg font-semibold">
+		cc
 		{#if verified}<ShieldAlert
 				class="text-success-700 inline-block"
 				width={15}

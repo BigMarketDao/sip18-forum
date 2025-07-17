@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { authenticate, getStxAddress, isLoggedIn } from '$lib/stacks/stacks-connect';
 	import { getConfig } from '$lib/stores/stores_config';
-	import { createThread } from '$lib/stores/threads';
+	import { createThread, storedBnsData } from '$lib/stores/threads';
 	import { openWalletForSignature, getNewMessageTemplate } from '$lib/utils/forum_helper';
 	import { Profanity } from '@2toad/profanity';
 	import { marked } from 'marked';
@@ -11,7 +11,7 @@
 	export let level: number;
 	export let onReload: (data: string) => void;
 	const address = getStxAddress();
-	let template = getNewMessageTemplate(messageBoardId, parentId, address, 1);
+	let template = getNewMessageTemplate(messageBoardId, parentId, address, 1, $storedBnsData);
 	let showPreview = false;
 	let error: string | null = null;
 	let loading = false;
@@ -25,8 +25,12 @@
 
 	async function handleSubmit() {
 		error = null;
-		if (!template.title.trim() || !template.content.trim()) {
-			error = 'Title and content are required';
+		if (!template.content.trim()) {
+			error = 'Content are required';
+			return;
+		}
+		if (!template.title.trim() && level === 1) {
+			error = 'Title required on top level message';
 			return;
 		}
 		const profanity = new Profanity();
@@ -37,7 +41,7 @@
 			loading = true;
 			const { signature, publicKey } = await openWalletForSignature(getConfig(), template);
 			const thread = await createThread({ forumContent: template, auth: { signature, publicKey } });
-			template = getNewMessageTemplate(messageBoardId, parentId, address, level);
+			template = getNewMessageTemplate(messageBoardId, parentId, address, level, $storedBnsData);
 			composerOpen = false;
 			onReload(thread);
 		} catch (e: any) {
@@ -68,12 +72,14 @@
 	>
 		<h2 class="text-xl font-bold">Create New Message</h2>
 
-		<input
-			type="text"
-			placeholder="Thread title"
-			class="input input-bordered w-full"
-			bind:value={template.title}
-		/>
+		{#if level === 1}
+			<input
+				type="text"
+				placeholder="Thread title"
+				class="input input-bordered w-full"
+				bind:value={template.title}
+			/>
+		{/if}
 
 		<!-- Markdown Content Area -->
 		<div class="space-y-2">

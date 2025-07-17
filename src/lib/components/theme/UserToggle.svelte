@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CircleUser, Moon, Wallet } from '@lucide/svelte';
+	import { CircleUser, Wallet } from '@lucide/svelte';
 	import {
 		authenticate,
 		getBnsNameFromAddress,

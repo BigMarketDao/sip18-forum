@@ -24,12 +24,12 @@ import type {
 	AuthenticatedForumContent
 } from 'sip18-forum-types';
 
-export function getNewBoardTemplate(stxAddress: string): ForumMessageBoard {
+export function getNewBoardTemplate(stxAddress: string, bnsName: string): ForumMessageBoard {
 	const created = new Date().getTime();
 	const messageBoardId = crypto.randomUUID();
 	const forumMessageBoard: ForumMessageBoard = {
 		messageBoardId,
-		linkedAccounts: [getDefaultStacksLinkedAccount(stxAddress)],
+		linkedAccounts: [getDefaultStacksLinkedAccount(stxAddress, bnsName)],
 		owner: stxAddress,
 		title: '',
 		content: '',
@@ -42,13 +42,14 @@ export function getNewMessageTemplate(
 	messageBoardId: string,
 	parentId: string,
 	stxAddress: string,
-	level: number
+	level: number,
+	bnsName: string
 ): ForumMessage {
 	const forumMessage: ForumMessage = {
 		messageBoardId,
 		parentId,
 		messageId: crypto.randomUUID(),
-		linkedAccounts: [getDefaultStacksLinkedAccount(stxAddress)],
+		linkedAccounts: [getDefaultStacksLinkedAccount(stxAddress, bnsName)],
 		title: '',
 		content: '',
 		created: new Date().getTime(),
@@ -58,13 +59,13 @@ export function getNewMessageTemplate(
 	return forumMessage;
 }
 
-export function getDefaultStacksLinkedAccount(stxAddress: string): LinkedAccount {
+export function getDefaultStacksLinkedAccount(stxAddress: string, bnsName: string): LinkedAccount {
 	const linkedAccount: LinkedAccount = {
 		source: 'stacks',
 		identifier: stxAddress,
 		verified: true,
 		preferred: true,
-		displayName: 'bns-todo'
+		displayName: bnsName
 	};
 	return linkedAccount;
 }

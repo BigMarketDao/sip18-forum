@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { authenticate, getStxAddress, isLoggedIn } from '$lib/stacks/stacks-connect';
 	import { getConfig } from '$lib/stores/stores_config';
-	import { createBoard, createThread } from '$lib/stores/threads';
+	import { createBoard, createThread, storedBnsData } from '$lib/stores/threads';
 	import { getNewBoardTemplate, openWalletForSignature } from '$lib/utils/forum_helper';
 	import { marked } from 'marked';
 	import type { ForumMessageBoard } from 'sip18-forum-types';
 	import { Profanity } from '@2toad/profanity';
 
 	const address = getStxAddress();
-	let template = getNewBoardTemplate(address);
+	let template = getNewBoardTemplate(address, $storedBnsData);
 	let showPreview = false;
 	let error: string | null = null;
 	let loading = false;
@@ -34,7 +34,7 @@
 			const { signature, publicKey } = await openWalletForSignature(getConfig(), template);
 			await createBoard({ forumContent: template, auth: { signature, publicKey } });
 			// reset
-			template = getNewBoardTemplate(address);
+			template = getNewBoardTemplate(address, $storedBnsData);
 			modalOpen = false;
 			if (typeof window !== undefined) {
 				window.location.reload();
