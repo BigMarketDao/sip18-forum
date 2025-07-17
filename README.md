@@ -12,9 +12,11 @@ See also [stacks voice](https://github.com/Clarity-Innovation-Lab/stacks-voice)
 
 ## TODO
 
-1. BNS Names
-2. Verified markers
-3. Nostr back end
+1. ~~BNS Names~~
+2. ~~Verified markers~~
+3. Integration (BigMarket)
+4. Hosted demo
+5. Nostr back end
 
 ## Developing
 
