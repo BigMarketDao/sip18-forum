@@ -1,8 +1,7 @@
 import { bytesToHex, hexToBytes } from '@stacks/common';
 import { sha256 } from '@noble/hashes/sha256';
-import { request } from '@stacks/connect';
+import { connect, getLocalStorage, request } from '@stacks/connect';
 import { ChainId } from '@stacks/network';
-import { getConfig, type Config } from '$lib/stores/stores_config.js';
 import {
 	encodeStructuredDataBytes,
 	publicKeyFromSignatureRsv,
@@ -19,10 +18,38 @@ import type {
 	ForumMessage,
 	BaseForumContent,
 	LinkedAccount,
-	PostAuthorisation,
 	ForumMessageBoard,
 	AuthenticatedForumContent
 } from 'sip18-forum-types';
+import type { GetAddressesResult } from '@stacks/connect/dist/types/methods';
+
+export function getStxAddress() {
+	try {
+		if (typeof window === 'undefined') return '???';
+		const userData = getLocalStorage();
+		return userData?.addresses.stx[0].address || '???';
+	} catch (err) {
+		return '???';
+	}
+}
+
+export interface Config {
+	VITE_PUBLIC_APP_NAME: string;
+	VITE_PUBLIC_APP_VERSION: string;
+	VITE_NETWORK: string;
+	VITE_FORUM_API: string;
+	VITE_STACKS_API: string;
+}
+
+export async function getBnsNameFromAddress(
+	api: string,
+	address: string
+): Promise<string | undefined> {
+	const res = await fetch(`${api}/v1/addresses/stacks/${address}`);
+	if (!res.ok) return undefined;
+	const data = await res.json();
+	return data.names?.[0] ?? undefined;
+}
 
 export function getNewBoardTemplate(stxAddress: string, bnsName: string): ForumMessageBoard {
 	const created = new Date().getTime();
@@ -75,20 +102,37 @@ export function getPreferredLinkedAccount(
 	return linkedAccounts.find((o) => o.preferred);
 }
 
-export async function openWalletForSignature(appConfig: Config, message: BaseForumContent) {
+export async function openWalletForSignature(config: Config, message: BaseForumContent) {
 	return await request('stx_signStructuredMessage', {
 		message: forumMessageToTupleCV(message),
-		domain: domainCV(getDomain(appConfig))
+		domain: domainCV(
+			getDomain(config.VITE_NETWORK, config.VITE_PUBLIC_APP_NAME, config.VITE_PUBLIC_APP_VERSION)
+		)
 	});
 }
+export async function authenticate(callback?: () => void) {
+	try {
+		const response: GetAddressesResult = await connect({});
+		console.log('authenticate: ', response);
 
-export function verifyPost(wrapper: AuthenticatedForumContent) {
+		if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+			const stxProvider = localStorage.getItem('STX_PROVIDER');
+			console.log('STX Provider from LocalStorage:', stxProvider);
+		}
+
+		if (callback) callback();
+	} catch (err) {
+		console.error('Error in authenticate:', err);
+	}
+}
+
+export function verifyPost(config: Config, wrapper: AuthenticatedForumContent) {
 	try {
 		const la = getPreferredLinkedAccount(wrapper.forumContent.linkedAccounts);
 		if (!la) return false;
 		const stxAddressFromKey = getC32AddressFromPublicKey(
 			wrapper.auth.publicKey,
-			getConfig().VITE_NETWORK
+			config.VITE_NETWORK
 		);
 		if (la.identifier !== stxAddressFromKey) {
 			console.log('/polls: wrong voter: ' + la.identifier + ' signer: ' + stxAddressFromKey);
@@ -97,9 +141,9 @@ export function verifyPost(wrapper: AuthenticatedForumContent) {
 		const forumPostCV = forumMessageToTupleCV(wrapper.forumContent);
 
 		let valid = verifyForumSignature(
-			getConfig().VITE_NETWORK,
-			getConfig().VITE_PUBLIC_APP_NAME,
-			getConfig().VITE_PUBLIC_APP_VERSION,
+			config.VITE_NETWORK,
+			config.VITE_PUBLIC_APP_NAME,
+			config.VITE_PUBLIC_APP_VERSION,
 			forumPostCV,
 			wrapper.auth.publicKey,
 			wrapper.auth.signature
@@ -117,12 +161,12 @@ export function verifyPost(wrapper: AuthenticatedForumContent) {
 	}
 }
 
-export function getDomain(appConfig: Config) {
-	const chainId = appConfig.VITE_NETWORK === 'mainnet' ? ChainId.Mainnet : ChainId.Testnet;
+export function getDomain(network: string, appName: string, appVersion: string) {
+	const chainId = network === 'mainnet' ? ChainId.Mainnet : ChainId.Testnet;
 	console.log(chainId);
 	return {
-		name: appConfig.VITE_PUBLIC_APP_NAME,
-		version: appConfig.VITE_PUBLIC_APP_VERSION,
+		name: appName,
+		version: appVersion,
 		'chain-id': chainId
 	};
 }
@@ -136,13 +180,13 @@ export function domainCV(domain: any) {
 }
 
 // SIP-018 domain (must match client signing)
-const domain = {
+export const domain = {
 	name: 'BigMarket Forum',
 	version: '1.0.0',
 	chainId: 1
 };
 
-function getC32AddressFromPublicKey(publicKeyHex: string, network: string): string {
+export function getC32AddressFromPublicKey(publicKeyHex: string, network: string): string {
 	//console.log("getC32AddressFromPublicKey: auth check");
 
 	if (network === 'mainnet' || network === 'testnet' || network === 'devnet') {
@@ -152,7 +196,7 @@ function getC32AddressFromPublicKey(publicKeyHex: string, network: string): stri
 	return 'unknown';
 }
 
-function forumMessageToTupleCV(message: BaseForumContent): TupleCV<TupleData<ClarityValue>> {
+export function forumMessageToTupleCV(message: BaseForumContent): TupleCV<TupleData<ClarityValue>> {
 	const la = getPreferredLinkedAccount(message.linkedAccounts);
 	if (!la) throw new Error('Unable to convert this message');
 	return tupleCV({
@@ -164,7 +208,7 @@ function forumMessageToTupleCV(message: BaseForumContent): TupleCV<TupleData<Cla
 	});
 }
 
-function verifyForumSignature(
+export function verifyForumSignature(
 	network: string,
 	appName: string,
 	appVersion: string,

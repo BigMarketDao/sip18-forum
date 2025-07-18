@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { marked } from 'marked';
-	import type { AuthenticatedForumContent, LinkedAccount } from 'sip18-forum-types';
+	import type { AuthenticatedForumContent } from 'sip18-forum-types';
 	import NewMessageCard from './NewMessageCard.svelte';
 	import MessageCard from './MessageCard.svelte'; // self-import for recursion
-	import { getPreferredLinkedAccount, verifyPost } from '$lib/utils/forum_helper';
+	import { getPreferredLinkedAccount, verifyPost } from '../utils/forum_helper';
 	import { onMount } from 'svelte';
-	import { getBnsNameFromAddress, getStxAddress } from '$lib/stacks/stacks-connect';
+	import { getBnsNameFromAddress, getStxAddress } from '../utils/forum_helper';
 	import { ShieldAlert, StopCircle } from 'lucide-svelte';
+	import type { Config } from '../utils/forum_helper';
 
+	export let config: Config;
 	export let message: AuthenticatedForumContent;
 	export let onReload: (data: string) => void;
 
@@ -19,10 +21,10 @@
 	};
 
 	onMount(async () => {
-		verified = verifyPost(message);
+		verified = verifyPost(config, message);
 		const preferedAccount = getPreferredLinkedAccount(message.forumContent.linkedAccounts);
 		identifier = preferedAccount?.identifier || getStxAddress();
-		displayName = await getBnsNameFromAddress(getStxAddress());
+		displayName = await getBnsNameFromAddress(config.VITE_FORUM_API, getStxAddress());
 	});
 </script>
 
@@ -47,6 +49,7 @@
 
 	<!-- Optional reply form -->
 	<NewMessageCard
+		{config}
 		messageBoardId={message.forumContent.messageBoardId}
 		parentId={message.forumContent.messageId}
 		level={message.forumContent.level + 1}
@@ -57,7 +60,7 @@
 	{#if message.forumContent.replies?.length}
 		<ul class="mt-4 space-y-4">
 			{#each message.forumContent.replies as reply}
-				<MessageCard message={reply} onReload={handleReload} />
+				<MessageCard {config} message={reply} onReload={handleReload} />
 			{/each}
 		</ul>
 	{/if}

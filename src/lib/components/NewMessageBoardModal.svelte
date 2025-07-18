@@ -1,13 +1,20 @@
 <script lang="ts">
-	import { authenticate, getStxAddress, isLoggedIn } from '$lib/stacks/stacks-connect';
-	import { getConfig } from '$lib/stores/stores_config';
-	import { createBoard, createThread, storedBnsData } from '$lib/stores/threads';
-	import { getNewBoardTemplate, openWalletForSignature } from '$lib/utils/forum_helper';
+	import { getConfig } from '../stores/stores_config';
+	import { createBoard, createThread, storedBnsData } from '../stores/threads';
+	import {
+		authenticate,
+		getNewBoardTemplate,
+		getStxAddress,
+		openWalletForSignature,
+		type Config
+	} from '../utils/forum_helper';
 	import { marked } from 'marked';
 	import type { ForumMessageBoard } from 'sip18-forum-types';
 	import { Profanity } from '@2toad/profanity';
+	import { isConnected } from '@stacks/connect';
 
 	const address = getStxAddress();
+	export let config: Config;
 	let template = getNewBoardTemplate(address, $storedBnsData);
 	let showPreview = false;
 	let error: string | null = null;
@@ -32,7 +39,10 @@
 		try {
 			loading = true;
 			const { signature, publicKey } = await openWalletForSignature(getConfig(), template);
-			await createBoard({ forumContent: template, auth: { signature, publicKey } });
+			await createBoard(config.VITE_FORUM_API, {
+				forumContent: template,
+				auth: { signature, publicKey }
+			});
 			// reset
 			template = getNewBoardTemplate(address, $storedBnsData);
 			modalOpen = false;
@@ -100,7 +110,7 @@
 					Cancel
 				</button>
 				{#key componentKey}
-					{#if isLoggedIn()}
+					{#if isConnected()}
 						<button class="btn btn-primary" on:click={handleSubmit} disabled={loading}>
 							{loading ? 'Posting…' : 'Create'}
 						</button>

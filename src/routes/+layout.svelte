@@ -1,13 +1,12 @@
 <script lang="ts">
-	import { configStore, type Config } from '$lib/stores/stores_config';
 	import { onMount } from 'svelte';
 	import '../app.css';
 	import { browser } from '$app/environment';
-	import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';
 	import AppBar from '$lib/components/theme/AppBar.svelte';
-	import { getBnsNameFromAddress, getStxAddress, isLoggedIn } from '$lib/stacks/stacks-connect';
-	import { storedBnsData } from '$lib';
-	// let { children } = $props();
+	import { configStore } from '$lib/stores/stores_config';
+	import { isConnected } from '@stacks/connect';
+	import { type Config, getBnsNameFromAddress, getStxAddress } from '$lib/utils/forum_helper';
+	import { storedBnsData } from '$lib/stores/threads';
 
 	export let data: {
 		network: string;
@@ -20,8 +19,8 @@
 
 	onMount(async () => {
 		if (!browser) return;
-		if (isLoggedIn()) {
-			const name = await getBnsNameFromAddress(getStxAddress());
+		if (isConnected()) {
+			const name = await getBnsNameFromAddress(data.appConfig.VITE_FORUM_API, getStxAddress());
 			storedBnsData.set(name || getStxAddress());
 		}
 	});

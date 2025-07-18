@@ -1,6 +1,4 @@
-import { getConfig } from '$lib/stores/stores_config';
-import { connect, getLocalStorage, disconnect, isConnected } from '@stacks/connect';
-import type { GetAddressesResult } from '@stacks/connect/dist/types/methods';
+import { getLocalStorage, disconnect, isConnected } from '@stacks/connect';
 
 export type AddressObject = {
 	stxAddress: string;
@@ -23,38 +21,12 @@ export async function getUserData() {
 	}
 }
 
-export async function authenticate(callback?: () => void) {
-	try {
-		const response: GetAddressesResult = await connect({});
-		console.log('authenticate: ', response);
-
-		if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-			const stxProvider = localStorage.getItem('STX_PROVIDER');
-			console.log('STX Provider from LocalStorage:', stxProvider);
-		}
-
-		if (callback) callback();
-	} catch (err) {
-		console.error('Error in authenticate:', err);
-	}
-}
-
 export function isLoggedIn() {
 	try {
 		if (typeof window === 'undefined') return false;
 		return isConnected();
 	} catch (err) {
 		return false;
-	}
-}
-
-export function getStxAddress() {
-	try {
-		if (typeof window === 'undefined') return '???';
-		const userData = getLocalStorage();
-		return userData?.addresses.stx[0].address || '???';
-	} catch (err) {
-		return '???';
 	}
 }
 
@@ -101,11 +73,4 @@ export function isLeather(): boolean {
 		}
 	}
 	return false;
-}
-
-export async function getBnsNameFromAddress(address: string): Promise<string | undefined> {
-	const res = await fetch(`${getConfig().VITE_STACKS_API}/v1/addresses/stacks/${address}`);
-	if (!res.ok) return undefined;
-	const data = await res.json();
-	return data.names?.[0] ?? undefined;
 }

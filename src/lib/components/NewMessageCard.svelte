@@ -1,11 +1,17 @@
 <script lang="ts">
-	import { authenticate, getStxAddress, isLoggedIn } from '$lib/stacks/stacks-connect';
-	import { getConfig } from '$lib/stores/stores_config';
-	import { createThread, storedBnsData } from '$lib/stores/threads';
-	import { openWalletForSignature, getNewMessageTemplate } from '$lib/utils/forum_helper';
+	import { createThread, storedBnsData } from '../stores/threads';
+	import {
+		openWalletForSignature,
+		getNewMessageTemplate,
+		type Config,
+		getStxAddress,
+		authenticate
+	} from '../utils/forum_helper';
 	import { Profanity } from '@2toad/profanity';
+	import { isConnected } from '@stacks/connect';
 	import { marked } from 'marked';
 
+	export let config: Config;
 	export let messageBoardId: string;
 	export let parentId: string;
 	export let level: number;
@@ -39,8 +45,11 @@
 
 		try {
 			loading = true;
-			const { signature, publicKey } = await openWalletForSignature(getConfig(), template);
-			const thread = await createThread({ forumContent: template, auth: { signature, publicKey } });
+			const { signature, publicKey } = await openWalletForSignature(config, template);
+			const thread = await createThread(config.VITE_FORUM_API, {
+				forumContent: template,
+				auth: { signature, publicKey }
+			});
 			template = getNewMessageTemplate(messageBoardId, parentId, address, level, $storedBnsData);
 			composerOpen = false;
 			onReload(thread);
@@ -112,7 +121,7 @@
 		<!-- Action Buttons -->
 		<div class="flex justify-end gap-2">
 			{#key componentKey}
-				{#if isLoggedIn()}
+				{#if isConnected()}
 					<div class="flex gap-x-3">
 						<button class="btn bg-tertiary-500" on:click={() => (composerOpen = !composerOpen)}>
 							{composerOpen ? 'Cancel' : 'New Message'}

@@ -1,13 +1,9 @@
 <script lang="ts">
 	import { CircleUser, Wallet } from '@lucide/svelte';
-	import {
-		authenticate,
-		getBnsNameFromAddress,
-		getStxAddress,
-		isLoggedIn,
-		logUserOut
-	} from '$lib/stacks/stacks-connect';
-	import { storedBnsData } from '$lib/stores/threads';
+	import { isLoggedIn, logUserOut } from '../../utils/signer';
+	import { storedBnsData } from '../../stores/threads';
+	import { getConfig } from '../../stores/stores_config';
+	import { authenticate, getBnsNameFromAddress, getStxAddress } from '../../utils/forum_helper';
 
 	let componentKey = 0;
 
@@ -16,7 +12,7 @@
 			logUserOut();
 		} else {
 			await authenticate();
-			const name = await getBnsNameFromAddress(getStxAddress());
+			const name = await getBnsNameFromAddress(getConfig().VITE_FORUM_API, getStxAddress());
 			storedBnsData.set(name || getStxAddress());
 			window.location.reload();
 		}

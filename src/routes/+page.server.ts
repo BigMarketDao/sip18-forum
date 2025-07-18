@@ -7,11 +7,11 @@ export const load: PageServerLoad = async ({ url }) => {
 	const appConfig = config[network];
 	console.log('appConfig: ', appConfig);
 
-	// const path = `${appConfig.VITE_BIGMARKET_API}/forum/boards`;
+	// const path = `${appConfig.VITE_FORUM_API}/forum/boards`;
 	// console.log('getPredictionMarket ' + path);
 	// const response = await fetch(path);
 	// if (response.status === 404) return [];
-	const boards = await loadBoards();
+	const boards = await loadBoards(appConfig.VITE_FORUM_API);
 	console.log('getPredictionMarket ' + boards);
-	return { boards };
+	return { appConfig, boards };
 };

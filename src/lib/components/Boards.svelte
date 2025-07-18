@@ -1,6 +1,8 @@
 <script lang="ts">
 	import NewMessageBoardModal from './NewMessageBoardModal.svelte';
-	import { storedBoards } from '$lib/stores/threads';
+	import { storedBoards } from '../stores/threads';
+	import type { Config } from '../utils/forum_helper';
+	export let config: Config;
 </script>
 
 <div class="space-y-6 p-6">
@@ -19,5 +21,5 @@
 			<!-- <ForumMessages messageBoardId={board.forumMessageBoard.messageBoardId} level={1} /> -->
 		</div>
 	{/each}
-	<NewMessageBoardModal />
+	<NewMessageBoardModal {config} />
 </div>

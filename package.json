@@ -1,8 +1,15 @@
 {
 	"name": "sip18-forum",
-	"version": "1.0.1",
+	"version": "1.0.6",
 	"description": "Svelte components for a SIP-018 signed message forum",
 	"type": "module",
+	"files": [
+		"index.js",
+		"index.d.ts",
+		"components",
+		"stores",
+		"utils"
+	],
 	"exports": {
 		".": {
 			"svelte": "./index.js",
@@ -11,14 +18,6 @@
 	},
 	"svelte": "./index.js",
 	"types": "./index.d.ts",
-	"files": [
-		"index.js",
-		"index.d.ts",
-		"index.svelte",
-		"*.css",
-		"components",
-		"theme"
-	],
 	"main": "./index.js",
 	"module": "./index.js",
 	"publishConfig": {
@@ -76,7 +75,7 @@
 		"@tailwindcss/vite": "^4.1.11",
 		"lucide-svelte": "^0.525.0",
 		"marked": "^16.0.0",
-		"sip18-forum-types": "^1.1.4",
+		"sip18-forum-types": "^1.1.5",
 		"tailwindcss": "^4.1.11"
 	},
 	"overrides": {
