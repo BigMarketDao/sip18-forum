@@ -37,9 +37,26 @@ export async function loadBoard(
 	}
 }
 
-export async function loadMessages(api: string, messageBoardId: string) {
+export async function loadBoardMessages(api: string, messageBoardId: string) {
 	try {
-		const res = await fetch(`${api}/forum/messages/${messageBoardId}`);
+		const res = await fetch(`${api}/forum/board-messages/${messageBoardId}`);
+		if (!res.ok) throw new Error('Failed to load messages');
+		const data = await res.json();
+		return data;
+	} catch (err) {
+		console.error('Error loading threads:', err);
+	}
+}
+
+/**
+ * Top level message/thread returned with nested replies. There is one thread per prediciton market!
+ * @param api
+ * @param messageId
+ * @returns
+ */
+export async function loadThread(api: string, messageId: string) {
+	try {
+		const res = await fetch(`${api}/forum/messages/${messageId}`);
 		if (!res.ok) throw new Error('Failed to load messages');
 		const data = await res.json();
 		return data;
@@ -62,7 +79,7 @@ export async function createThread(
 	});
 	if (!res.ok) throw new Error('Failed to create thread');
 
-	return await loadMessages(api, payload.forumContent.messageBoardId); // refresh local store
+	return await loadBoardMessages(api, payload.forumContent.messageBoardId); // refresh local store
 }
 
 export async function createBoard(
@@ -77,7 +94,7 @@ export async function createBoard(
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(payload)
 	});
-	if (!res.ok) throw new Error('Failed to create thread');
+	if (!res.ok) throw new Error('Failed to create board');
 	const data = await loadBoards(api); // refresh local store
 	storedBoards.set(data);
 	if (data.length) storedBoard.set(data[0]);

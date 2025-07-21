@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getConfig } from '../stores/stores_config';
-	import { createBoard, createThread, storedBnsData } from '../stores/threads';
+	import { createBoard, storedBnsData } from '../stores/threads';
 	import {
 		authenticate,
 		getNewBoardTemplate,
@@ -9,7 +9,6 @@
 		type Config
 	} from '../utils/forum_helper';
 	import { marked } from 'marked';
-	import type { ForumMessageBoard } from 'sip18-forum-types';
 	import { Profanity } from '@2toad/profanity';
 	import { isConnected } from '@stacks/connect';
 

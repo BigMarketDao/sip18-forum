@@ -3,7 +3,7 @@
 		AuthenticatedForumContent,
 		AuthenticatedForumMessageBoard
 	} from 'sip18-forum-types';
-	import ForumMessages from './ForumMessages.svelte';
+	import BoardMessages from './BoardMessages.svelte';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import type { Config } from '../utils/forum_helper';
@@ -27,7 +27,7 @@
 			<div
 				class="text-surface-contrast-500 bg-primary-50-950 rounded-2xl border-1 border-dashed p-3 py-4 shadow"
 			>
-				<ForumMessages
+				<BoardMessages
 					{config}
 					{messages}
 					messageBoardId={board.forumMessageBoard.messageBoardId}

@@ -163,7 +163,9 @@ export function verifyPost(config: Config, wrapper: AuthenticatedForumContent) {
 
 export function getDomain(network: string, appName: string, appVersion: string) {
 	const chainId = network === 'mainnet' ? ChainId.Mainnet : ChainId.Testnet;
-	console.log(chainId);
+	console.log('chainId: ' + chainId);
+	console.log('appName: ' + appName);
+	console.log('appVersion: ' + appVersion);
 	return {
 		name: appName,
 		version: appVersion,

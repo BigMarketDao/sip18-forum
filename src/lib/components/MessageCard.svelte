@@ -33,7 +33,9 @@
 		.forumContent.level * 1.5}"
 >
 	{#if message.forumContent.level === 1}
-		<h2 class="text-primary-500 text-lg font-semibold">{message.forumContent.title}</h2>
+		<h2 class="text-primary-500 text-lg font-semibold whitespace-nowrap">
+			<a href={`/threads/${message.forumContent.messageId}`}>{message.forumContent.title}</a>
+		</h2>
 	{/if}
 	<h3 class="text-primary-500 text-lg font-semibold">
 		{#if verified}<ShieldAlert
@@ -44,6 +46,7 @@
 		{displayName || identifier}
 	</h3>
 	<div class="prose max-w-none text-sm">
+		{message.forumContent.level + ') ' + message.forumContent.title}
 		{@html marked(message.forumContent.content)}
 	</div>
 

@@ -1,0 +1,16 @@
+import { config } from '$lib/stores/stores_config';
+import { getNetworkFromUrl } from '$lib/stores/stores_config';
+import { loadThread } from '$lib/stores/threads';
+import type { PageServerLoad } from './$types';
+
+/**
+ * Used to display a thread of messages - each prediction market owns a thread
+ * @param param0
+ * @returns
+ */
+export const load: PageServerLoad = async ({ url, params }) => {
+	const network = getNetworkFromUrl(url);
+	const appConfig = config[network];
+	const thread = await loadThread(appConfig.VITE_FORUM_API, params.threadId);
+	return { appConfig, thread, boardId: params.threadId };
+};
