@@ -1,6 +1,6 @@
 {
 	"name": "sip18-forum",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"description": "Svelte components for a SIP-018 signed message forum",
 	"type": "module",
 	"files": [

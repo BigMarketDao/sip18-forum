@@ -11,12 +11,12 @@
 	};
 	let inited = false;
 	storedBoards.set(data.boards);
-	console.log('boards: ', data.appConfig);
+	//console.log('boards: ', data.appConfig);
 
 	onMount(() => {
 		//if (typeof window !== undefined && data.boards.length)
 		//window.location.replace(`/forums/${data.boards[0].forumMessageBoard.messageBoardId}`);
-		console.log('data.boards: ', data.boards);
+		//console.log('data.boards: ', data.boards);
 		inited = true;
 	});
 </script>

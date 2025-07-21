@@ -13,7 +13,7 @@
 		appConfig: Config;
 	};
 	const thread = data.thread;
-	console.log('boards: ', thread);
+	//console.log('boards: ', thread);
 </script>
 
 <div class="container mx-auto max-w-3xl space-y-4 p-4">

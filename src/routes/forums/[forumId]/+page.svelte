@@ -13,7 +13,7 @@
 	};
 	const boards = data.boards;
 	const messages = data.messages;
-	console.log('boards: ', boards);
+	//console.log('boards: ', boards);
 </script>
 
 <div class="container mx-auto max-w-3xl space-y-4 p-4">
