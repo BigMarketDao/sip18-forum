@@ -32,6 +32,28 @@ export function getStxAddress() {
 		return '???';
 	}
 }
+export interface Classes {
+	root?: string;
+	messageCard?: {
+		container: string;
+		title: string;
+		author: string;
+		iconSuccess: string;
+		iconError: string;
+		body: string;
+	};
+	newMessageCard?: {
+		container: string;
+		titleInput: string;
+		contentLabel: string;
+		contentEditor: string;
+		contentPreview: string;
+		error: string;
+		buttonCancel: string;
+		buttonPost: string;
+		replyLink: string;
+	};
+}
 
 export interface Config {
 	VITE_PUBLIC_APP_NAME: string;

@@ -6,7 +6,7 @@
 	import { getPreferredLinkedAccount, verifyPost } from '../utils/forum_helper';
 	import { onMount } from 'svelte';
 	import { getBnsNameFromAddress, getStxAddress } from '../utils/forum_helper';
-	import type { Config } from '../utils/forum_helper';
+	import type { Classes, Config } from '../utils/forum_helper';
 	import { ShieldCheck, StopCircle } from '@lucide/svelte';
 
 	export let config: Config;
@@ -15,6 +15,13 @@
 	export let thread: AuthenticatedForumContent;
 	export let message: AuthenticatedForumContent;
 	export let onReload: (data: string) => void;
+	export let classes: Classes = {};
+	const defaultTitle = 'text-primary-500 text-sm font-semibold';
+	const defaultContainer = 'ml-4 border-l border-gray-200 pl-4';
+	const defaultAuthor = 'text-xs text-gray-700 font-medium';
+	const defaultIconSuccess = 'text-green-500';
+	const defaultIconError = 'text-red-500';
+	const defaultBody = 'prose prose-sm text-gray-200';
 
 	let verified = false;
 	let identifier: string;
@@ -32,23 +39,26 @@
 </script>
 
 <div
-	class="card bg-surface-100-900 text-surface-contrast-100-900 mb-4 space-y-3 rounded-xl p-4 shadow ml-{message
-		.forumContent.level * 1.5}"
+	class={`${classes.messageCard?.container || defaultContainer} ml-${(message.forumContent.level - 1) * 1.5}`}
 >
 	{#if message.forumContent.level === 1}
-		<h2 class="text-primary-500 text-sm font-semibold">
+		<h2 class={classes.messageCard?.title || defaultTitle}>
 			{message.forumContent.title}
 		</h2>
 	{/if}
-	<h3 class="text-primary-500 text-xs font-semibold break-words">
+	<h3 class={classes.messageCard?.author || defaultAuthor}>
 		{#if verified}<ShieldCheck
-				class="text-success-500 inline-block"
+				class={`${classes.messageCard?.iconSuccess || defaultIconSuccess} inline-block`}
 				width={15}
 				height={15}
-			/>{:else}<StopCircle class="text-error-700 inline-block" width={15} height={15} />{/if}
+			/>{:else}<StopCircle
+				class={`${classes.messageCard?.iconError || defaultIconError} inline-block`}
+				width={15}
+				height={15}
+			/>{/if}
 		{displayName || identifier}
 	</h3>
-	<div class="prose flex max-w-none flex-col gap-y-5 text-xs">
+	<div class={classes.messageCard?.body || defaultBody}>
 		{#if message.forumContent.title?.length}<div>{message.forumContent.title}</div>{/if}
 		<div>{@html marked(message.forumContent.content)}</div>
 	</div>
