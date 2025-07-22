@@ -6,10 +6,13 @@
 	import { getPreferredLinkedAccount, verifyPost } from '../utils/forum_helper';
 	import { onMount } from 'svelte';
 	import { getBnsNameFromAddress, getStxAddress } from '../utils/forum_helper';
-	import { ShieldAlert, StopCircle } from 'lucide-svelte';
 	import type { Config } from '../utils/forum_helper';
+	import { ShieldCheck, StopCircle } from '@lucide/svelte';
 
 	export let config: Config;
+	// the first message IS the thread - this gets replaces by replies so we keep the main thread
+	// for refreshing the tree.
+	export let thread: AuthenticatedForumContent;
 	export let message: AuthenticatedForumContent;
 	export let onReload: (data: string) => void;
 
@@ -33,37 +36,42 @@
 		.forumContent.level * 1.5}"
 >
 	{#if message.forumContent.level === 1}
-		<h2 class="text-primary-500 text-lg font-semibold whitespace-nowrap">
-			<a href={`/threads/${message.forumContent.messageId}`}>{message.forumContent.title}</a>
+		<h2 class="text-primary-500 text-sm font-semibold">
+			{message.forumContent.title}
 		</h2>
 	{/if}
-	<h3 class="text-primary-500 text-lg font-semibold">
-		{#if verified}<ShieldAlert
-				class="text-success-700 inline-block"
+	<h3 class="text-primary-500 text-xs font-semibold break-words">
+		{#if verified}<ShieldCheck
+				class="text-success-500 inline-block"
 				width={15}
 				height={15}
 			/>{:else}<StopCircle class="text-error-700 inline-block" width={15} height={15} />{/if}
 		{displayName || identifier}
 	</h3>
-	<div class="prose max-w-none text-sm">
-		{message.forumContent.level + ') ' + message.forumContent.title}
-		{@html marked(message.forumContent.content)}
+	<div class="prose flex max-w-none flex-col gap-y-5 text-xs">
+		{#if message.forumContent.title?.length}<div>{message.forumContent.title}</div>{/if}
+		<div>{@html marked(message.forumContent.content)}</div>
 	</div>
 
-	<!-- Optional reply form -->
+	<!-- 
+		Optional reply form: messageBoardId is a container/board for messages. 
+	 	Threads are top level messsages (level=1 and parentId=maessageBoardId).
+	 	Messages and replies are identical - they are displayed recursively using level and parentId.
+	-->
 	<NewMessageCard
 		{config}
 		messageBoardId={message.forumContent.messageBoardId}
 		parentId={message.forumContent.messageId}
+		threadId={thread.forumContent.messageId}
 		level={message.forumContent.level + 1}
 		onReload={handleReload}
 	/>
 
 	<!-- Recursively render replies -->
-	{#if message.forumContent.replies?.length}
+	{#if message?.forumContent.replies?.length}
 		<ul class="mt-4 space-y-4">
 			{#each message.forumContent.replies as reply}
-				<MessageCard {config} message={reply} onReload={handleReload} />
+				<MessageCard {config} {thread} message={reply} onReload={handleReload} />
 			{/each}
 		</ul>
 	{/if}

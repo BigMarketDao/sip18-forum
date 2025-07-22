@@ -10,7 +10,7 @@
 	export let thread: AuthenticatedForumContent;
 
 	const handleReload = async (data: any) => {
-		thread = await loadThread(config.VITE_FORUM_API, page.params.threadId);
+		thread = await loadThread(config.VITE_FORUM_API, thread.forumContent.messageId);
 	};
 
 	onMount(async () => {
@@ -18,12 +18,6 @@
 	});
 </script>
 
-<MessageCard {config} message={thread} onReload={handleReload} />
-
-<!-- <ul class="space-y-4">
-	{#if thread.forumContent.replies?.length}
-		{#each thread.forumContent.replies as message}
-			<MessageCard {config} {message} onReload={handleReload} />
-		{/each}
-	{/if}
-</ul> -->
+{#if thread}
+	<MessageCard {config} message={thread} {thread} onReload={handleReload} />
+{/if}

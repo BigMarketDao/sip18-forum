@@ -12,8 +12,12 @@
 	import { marked } from 'marked';
 
 	export let config: Config;
+	// the id of the message board - message boards contain threads where thread is a top level message.
 	export let messageBoardId: string;
+	// the id of the parent message
 	export let parentId: string;
+	// the id of the parent thread
+	export let threadId: string;
 	export let level: number;
 	export let onReload: (data: string) => void;
 	const address = getStxAddress();
@@ -46,7 +50,7 @@
 		try {
 			loading = true;
 			const { signature, publicKey } = await openWalletForSignature(config, template);
-			const thread = await createThread(config.VITE_FORUM_API, {
+			const thread = await createThread(config.VITE_FORUM_API, threadId, {
 				forumContent: template,
 				auth: { signature, publicKey }
 			});
@@ -69,7 +73,7 @@
 			href="/"
 			on:click|preventDefault={() => (composerOpen = !composerOpen)}
 		>
-			new thread
+			reply
 		</a>
 	</div>
 {/if}

@@ -67,6 +67,7 @@ export async function loadThread(api: string, messageId: string) {
 
 export async function createThread(
 	api: string,
+	threadId: string,
 	payload: {
 		forumContent: ForumMessage;
 		auth: PostAuthorisation;
@@ -79,7 +80,7 @@ export async function createThread(
 	});
 	if (!res.ok) throw new Error('Failed to create thread');
 
-	return await loadBoardMessages(api, payload.forumContent.messageBoardId); // refresh local store
+	return await loadThread(api, threadId); // refresh local store
 }
 
 export async function createBoard(

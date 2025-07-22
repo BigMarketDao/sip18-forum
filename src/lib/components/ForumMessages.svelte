@@ -19,10 +19,16 @@
 </script>
 
 {#if level === 1}
+	<!-- 
+		Optional reply form: messageBoardId is a container/board for messages. 
+	 	Threads are top level messsages (level=1 and parentId=maessageBoardId).
+	 	Messages and replies are identical - they are displayed recursively using level and parentId.
+	-->
 	<NewMessageCard
 		{config}
 		{messageBoardId}
 		parentId={messageBoardId}
+		threadId={messages[0].forumContent.messageId}
 		onReload={handleReload}
 		level={1}
 	/>
@@ -30,6 +36,6 @@
 
 <ul class="space-y-4">
 	{#each messages as message}
-		<MessageCard {config} {message} onReload={handleReload} />
+		<MessageCard {config} thread={messages[0]} {message} onReload={handleReload} />
 	{/each}
 </ul>
