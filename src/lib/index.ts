@@ -9,3 +9,4 @@ export { default as MessageCard } from './components/MessageCard.svelte';
 export { default as ThemeToggle } from './components/theme/ThemeToggle.svelte';
 export * from './stores/threads';
 export * from './utils/forum_helper';
+export * from './utils/connection_wrapper';

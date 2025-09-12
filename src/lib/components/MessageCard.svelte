@@ -33,8 +33,8 @@
 	onMount(async () => {
 		verified = verifyPost(config, message);
 		const preferedAccount = getPreferredLinkedAccount(message.forumContent.linkedAccounts);
-		identifier = preferedAccount?.identifier || getStxAddress();
-		displayName = await getBnsNameFromAddress(config.VITE_FORUM_API, getStxAddress());
+		identifier = preferedAccount?.identifier || (await getStxAddress());
+		displayName = await getBnsNameFromAddress(config.VITE_FORUM_API, await getStxAddress());
 	});
 </script>
 

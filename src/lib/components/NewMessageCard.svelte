@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { createThread, storedBnsData } from '../stores/threads';
+	import { onMount } from 'svelte';
+	import { marked } from 'marked';
+	import { Profanity } from '@2toad/profanity';
+
+	import { storedBnsData } from '../stores/threads';
+	import { createThread } from '../stores/threads';
+
+	// your browser-safe wrappers (each uses dynamic import inside)
+	import { isConnected } from '$lib/utils/connection_wrapper';
 	import {
 		openWalletForSignature,
 		getNewMessageTemplate,
@@ -8,20 +16,15 @@
 		authenticate,
 		type Classes
 	} from '../utils/forum_helper';
-	import { Profanity } from '@2toad/profanity';
-	import { isConnected } from '@stacks/connect';
-	import { marked } from 'marked';
 
 	export let config: Config;
-	// the id of the message board - message boards contain threads where thread is a top level message.
-	export let messageBoardId: string;
-	// the id of the parent message
-	export let parentId: string;
-	// the id of the parent thread
-	export let threadId: string;
+	export let messageBoardId: string; // board contains threads (top-level messages)
+	export let parentId: string; // parent message id
+	export let threadId: string; // parent thread id
 	export let level: number;
 	export let onReload: (data: string) => void;
 	export let classes: Classes = {};
+
 	const defaultContainer = 'p-5 m-5 border rounded-xl p-4 shadow-sm';
 	const defaultTitleInput = 'input w-full border-gray-300';
 	const defaultContentLabel = 'text-sm text-gray-700';
@@ -32,45 +35,70 @@
 	const defaultButtonPost = 'btn btn-primary';
 	const defaultReplyLink = 'text-tertiary text-sm underline';
 
-	const address = getStxAddress();
-	let template = getNewMessageTemplate(messageBoardId, parentId, address, 1, $storedBnsData);
+	type MessageTemplate = ReturnType<typeof getNewMessageTemplate>;
+
 	let showPreview = false;
 	let error: string | null = null;
 	let loading = false;
 	let composerOpen = false;
 	let componentKey = 0;
 
-	const handleConnect = async () => {
-		await authenticate();
-		componentKey++;
-	};
+	let connected = false;
+	let address: string = '';
+	let template: MessageTemplate;
+
+	// hydrate browser-only state
+	onMount(async () => {
+		connected = await isConnected(); // async, browser-only
+		address = (await getStxAddress()) ?? ''; // safe in browser
+		template = getNewMessageTemplate(
+			// build initial template
+			messageBoardId,
+			parentId,
+			address,
+			level ?? 1,
+			$storedBnsData
+		);
+	});
+
+	async function handleConnect() {
+		await authenticate(); // opens wallet flow
+		connected = await isConnected();
+		componentKey++; // force button block to re-render
+	}
 
 	async function handleSubmit() {
 		error = null;
-		if (!template.content.trim()) {
+
+		if (!template?.content?.trim()) {
 			error = 'Content are required';
 			return;
 		}
-		if (!template.title.trim() && level === 1) {
+		if (!template?.title?.trim() && level === 1) {
 			error = 'Title required on top level message';
 			return;
 		}
+
 		const profanity = new Profanity();
 		template.title = profanity.censor(template.title);
 		template.content = profanity.censor(template.content);
 
 		try {
 			loading = true;
+
 			const { signature, publicKey } = await openWalletForSignature(config, template);
+
 			const thread = await createThread(config.VITE_FORUM_API, threadId, {
 				forumContent: template,
 				auth: { signature, publicKey }
 			});
+
+			// reset composer
 			template = getNewMessageTemplate(messageBoardId, parentId, address, level, $storedBnsData);
 			composerOpen = false;
 			onReload(thread);
 		} catch (e: any) {
-			error = e.message;
+			error = e?.message ?? String(e);
 		} finally {
 			loading = false;
 		}
@@ -93,8 +121,6 @@
 <!-- Composer Card -->
 {#if composerOpen}
 	<div class={classes.newMessageCard?.container ?? defaultContainer}>
-		<!-- <h2 class="text-xl font-bold">Create New Message</h2> -->
-
 		{#if level === 1}
 			<input
 				type="text"
@@ -132,7 +158,7 @@
 
 		<div class="flex justify-end gap-2">
 			{#key componentKey}
-				{#if isConnected()}
+				{#if connected}
 					<div class="flex gap-x-3">
 						<button
 							class={classes.newMessageCard?.buttonCancel ?? defaultButtonCancel}

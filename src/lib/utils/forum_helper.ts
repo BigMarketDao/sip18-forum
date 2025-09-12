@@ -1,6 +1,5 @@
 import { bytesToHex, hexToBytes } from '@stacks/common';
 import { sha256 } from '@noble/hashes/sha256';
-import { connect, getLocalStorage, request } from '@stacks/connect';
 import { ChainId } from '@stacks/network';
 import {
 	encodeStructuredDataBytes,
@@ -21,12 +20,17 @@ import type {
 	ForumMessageBoard,
 	AuthenticatedForumContent
 } from 'sip18-forum-types';
-import type { GetAddressesResult } from '@stacks/connect/dist/types/methods';
+import { connect, getLocalStorage, request } from './connection_wrapper';
 
-export function getStxAddress() {
+export interface SignatureData {
+	signature: string;
+	publicKey: string;
+}
+
+export async function getStxAddress() {
 	try {
 		if (typeof window === 'undefined') return '???';
-		const userData = getLocalStorage();
+		const userData = await getLocalStorage();
 		return userData?.addresses.stx[0].address || '???';
 	} catch (err) {
 		return '???';
@@ -125,16 +129,16 @@ export function getPreferredLinkedAccount(
 }
 
 export async function openWalletForSignature(config: Config, message: BaseForumContent) {
-	return await request('stx_signStructuredMessage', {
+	return (await request('stx_signStructuredMessage', {
 		message: forumMessageToTupleCV(message),
 		domain: domainCV(
 			getDomain(config.VITE_NETWORK, config.VITE_PUBLIC_APP_NAME, config.VITE_PUBLIC_APP_VERSION)
 		)
-	});
+	})) as SignatureData;
 }
 export async function authenticate(callback?: () => void) {
 	try {
-		const response: GetAddressesResult = await connect({});
+		const response = await connect({});
 		console.log('authenticate: ', response);
 
 		if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {

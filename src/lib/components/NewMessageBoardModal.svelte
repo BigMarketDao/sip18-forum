@@ -1,6 +1,13 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { marked } from 'marked';
+	import { Profanity } from '@2toad/profanity';
+
 	import { getConfig } from '../stores/stores_config';
 	import { createBoard, storedBnsData } from '../stores/threads';
+
+	// browser-safe wrappers: each one does a dynamic import internally
+	import { isConnected } from '$lib/utils/connection_wrapper';
 	import {
 		authenticate,
 		getNewBoardTemplate,
@@ -8,33 +15,45 @@
 		openWalletForSignature,
 		type Config
 	} from '../utils/forum_helper';
-	import { marked } from 'marked';
-	import { Profanity } from '@2toad/profanity';
-	import { isConnected } from '@stacks/connect';
 
-	const address = getStxAddress();
 	export let config: Config;
-	let template = getNewBoardTemplate(address, $storedBnsData);
+
+	let address = '';
+	type BoardTemplate = ReturnType<typeof getNewBoardTemplate>;
+	let template: BoardTemplate;
+
 	let showPreview = false;
 	let error: string | null = null;
 	let loading = false;
 	let modalOpen = false;
 	let componentKey = 0;
+	let connected = false;
+
+	// hydrate browser-only state
+	onMount(async () => {
+		connected = await isConnected();
+		address = (await getStxAddress()) ?? '';
+		template = getNewBoardTemplate(address, $storedBnsData);
+	});
 
 	const handleConnect = async () => {
 		await authenticate();
-		componentKey++;
+		connected = await isConnected();
+		componentKey++; // force the keyed block to re-render
 	};
 
 	async function handleSubmit() {
 		error = null;
-		if (!template.title.trim() || !template.content.trim()) {
+
+		if (!template?.title?.trim() || !template?.content?.trim()) {
 			error = 'Title and content are required';
 			return;
 		}
+
 		const profanity = new Profanity();
 		template.title = profanity.censor(template.title);
 		template.content = profanity.censor(template.content);
+
 		try {
 			loading = true;
 			const { signature, publicKey } = await openWalletForSignature(getConfig(), template);
@@ -42,14 +61,16 @@
 				forumContent: template,
 				auth: { signature, publicKey }
 			});
+
 			// reset
 			template = getNewBoardTemplate(address, $storedBnsData);
 			modalOpen = false;
-			if (typeof window !== undefined) {
+
+			if (typeof window !== 'undefined') {
 				window.location.reload();
 			}
 		} catch (e: any) {
-			error = e.message;
+			error = e?.message ?? String(e);
 		} finally {
 			loading = false;
 		}
@@ -84,8 +105,8 @@
 						id="content-entry"
 						class="textarea textarea-bordered min-h-[120px] w-full"
 						bind:value={template.content}
-						placeholder="About this message board in Markdown…"
-					></textarea>
+						placeholder="About this message board in Markdown…">{template.content}</textarea
+					>
 				{:else}
 					<div class="prose bg-base-100 border-base-300 max-w-none rounded border p-4">
 						{@html marked(template.content)}
@@ -108,8 +129,9 @@
 				<button class="btn" on:click={() => (modalOpen = false)} disabled={loading}>
 					Cancel
 				</button>
+
 				{#key componentKey}
-					{#if isConnected()}
+					{#if connected}
 						<button class="btn btn-primary" on:click={handleSubmit} disabled={loading}>
 							{loading ? 'Posting…' : 'Create'}
 						</button>

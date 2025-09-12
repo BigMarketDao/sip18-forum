@@ -1,4 +1,4 @@
-import { getLocalStorage, disconnect, isConnected } from '@stacks/connect';
+import { disconnect, isConnected } from './connection_wrapper';
 
 export type AddressObject = {
 	stxAddress: string;
@@ -11,44 +11,18 @@ export type AddressObject = {
 	btcPubkeySegwit1?: string;
 };
 
-export async function getUserData() {
-	try {
-		if (typeof window === 'undefined') return;
-		const userData = getLocalStorage();
-		return userData;
-	} catch (err) {
-		return;
-	}
-}
-
-export function isLoggedIn() {
+export async function isLoggedIn() {
 	try {
 		if (typeof window === 'undefined') return false;
-		return isConnected();
+		return await isConnected();
 	} catch (err) {
 		return false;
 	}
 }
 
-export function getBtcAddress() {
-	try {
-		if (typeof window === 'undefined') return;
-		const userData = getLocalStorage();
-		return userData?.addresses.btc[0].address || '???';
-	} catch (err) {
-		return;
-	}
-}
-
-export function loginStacksFromHeader(document: any) {
-	if (typeof window === 'undefined') return false;
-	const el = document.getElementById('connect-wallet');
-	return el ? el.click() : false;
-}
-
-export function logUserOut() {
+export async function logUserOut() {
 	if (typeof window === 'undefined') return;
-	return disconnect();
+	return await disconnect();
 }
 
 export function isXverse(): boolean {

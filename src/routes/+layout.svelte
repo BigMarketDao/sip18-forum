@@ -4,9 +4,9 @@
 	import { browser } from '$app/environment';
 	import AppBar from '$lib/components/theme/AppBar.svelte';
 	import { configStore } from '$lib/stores/stores_config';
-	import { isConnected } from '@stacks/connect';
 	import { type Config, getBnsNameFromAddress, getStxAddress } from '$lib/utils/forum_helper';
 	import { storedBnsData } from '$lib/stores/threads';
+	import { isConnected } from '$lib/utils/connection_wrapper';
 
 	export let data: {
 		network: string;
@@ -18,10 +18,14 @@
 	// let isDark = false;
 
 	onMount(async () => {
+		const connected = await isConnected();
 		if (!browser) return;
-		if (isConnected()) {
-			const name = await getBnsNameFromAddress(data.appConfig.VITE_FORUM_API, getStxAddress());
-			storedBnsData.set(name || getStxAddress());
+		if (connected) {
+			const name = await getBnsNameFromAddress(
+				data.appConfig.VITE_FORUM_API,
+				await getStxAddress()
+			);
+			storedBnsData.set(name || (await getStxAddress()));
 		}
 	});
 </script>
