@@ -11,7 +11,7 @@
 	let connected = false;
 
 	const toggleAuth = async () => {
-		if (isLoggedIn()) {
+		if (connected) {
 			await logUserOut();
 		} else {
 			await authenticate();
