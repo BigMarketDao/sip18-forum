@@ -231,8 +231,7 @@ export function forumMessageToTupleCV(message: BaseForumContent): TupleCV<TupleD
 		identifier: stringAsciiCV(la.identifier),
 		created: uintCV(message.created),
 		title: stringAsciiCV(message.title),
-		content: stringAsciiCV(message.content),
-		name: stringAsciiCV(la.displayName || 'unknown')
+		content: stringAsciiCV(message.content)
 	});
 }
 
