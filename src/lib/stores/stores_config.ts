@@ -12,7 +12,7 @@ export function getConfig(): Config {
 
 export function getNetworkFromUrl(url: URL): string {
 	const chain = url.searchParams.get('chain');
-	return chain && ['mainnet', 'testnet', 'devnet'].includes(chain) ? chain : 'testnet';
+	return chain && ['mainnet', 'testnet', 'devnet'].includes(chain) ? chain : 'mainnet';
 }
 
 export const config: { [key: string]: Config } = {
