@@ -209,7 +209,7 @@ export function domainCV(domain: any) {
 
 // SIP-018 domain (must match client signing)
 export const domain = {
-	name: 'BigMarket Forum',
+	name: 'BigMarket',
 	version: '1.0.0',
 	chainId: 1
 };

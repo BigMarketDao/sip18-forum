@@ -43,7 +43,7 @@
 >
 	{#if message.forumContent.level === 1}
 		<h2 class={classes.messageCard?.title || defaultTitle}>
-			{message.forumContent.title}
+			{@html message.forumContent.title}
 		</h2>
 	{/if}
 	<h3 class={classes.messageCard?.author || defaultAuthor}>
