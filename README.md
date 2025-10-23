@@ -1,5 +1,7 @@
 # sip18-forum
 
+⚠️ This repo has been merged into BigMarketDao/bigmarket-monorepo
+
 Quick start forum compatible with Stacks SIP-018 structured messages.
 
 Main components;
